@@ -59,7 +59,20 @@ exports.index = async (req, res) => {
       }
     }
 
-    return json(res, { title: `Search results for "${q}"`, phones });
+    return json(res, {
+      title: `Search results for "${q}"`,
+      phones,
+      ...(phones.length === 0 && {
+        _debug: {
+          finalUrl,
+          htmlLength: htmlResult.length,
+          pageTitle: $("title").text().trim(),
+          hasMakersDiv: $(".makers").length,
+          hasSpecTitle: $("h1.specs-phone-name-title").length,
+          bodySnippet: $("body").text().replace(/\s+/g, " ").trim().slice(0, 300),
+        },
+      }),
+    });
   } catch (error) {
     return errorJson(res, error);
   }
